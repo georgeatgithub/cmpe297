@@ -65,3 +65,7 @@ printf ("Hypervisor handle closed\n");
 return 0; 
 
 } 
+
+Q2:
+1. For the hypervisor architecture in Xen, the mechanism by which a guest initiates a hypercall is that the hypercall interface serves as the sole mechanism for cross-layer interaction bewteen VMs and Xen. A hypercall transfers control to a more privileged state in the VMM.
+2. The performance impllication about this mechanism is that there is low performance overhead of virtualization, but desire for high performance virtualization of commodity OSes. 
