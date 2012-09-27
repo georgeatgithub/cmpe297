@@ -1,0 +1,67 @@
+Q1. How to Add a new hypercall:
+----------------------------------------------------------------
+1. Add my hypercall in xen.h ---- #define __HYPERVISOR_jeet1 56 
+
+2. Added it to entry.S - hypercall table ---- .quad do_mca /* 48 */ 
+.quad do_jeet1 /* 56 */ 
+- hypercall_args_table ---- .byte 1 /* do_mca */ /* 48 */ 
+.byte 0 /* do_jeet1 */ /* 56 */ 
+
+3. Then declared my hypercall in asm-x86/hypercall.h ---- void do_jeet1(void); 
+
+4. Then calling it in domctl.c in xen/common --- void do_jeet1(void){ 
+
+printk ("Successfull Hypercall made to __HYPERVISOR_jeet1"); 
+
+} 
+
+5. Declared a function in xc_domain.c in xen/tools to call this hypercall 
+
+int hypercall_test(int handle){ 
+
+int rc; 
+int arg=0; 
+//int cmd=1; 
+// 
+//int test; 
+/* Hypercall definitions */ 
+
+DECLARE_HYPERCALL; 
+hypercall.op = __HYPERVISOR_jeet1; 
+rc = do_xen_hypercall(handle, &hypercall); 
+hypercall.arg[0] = 0; 
+hypercall.arg[1] = (unsigned long)&arg; 
+//printf ("Hypercall Details: %d\n", rc); 
+//xc_interface_close(handle); 
+return rc; 
+} 
+
+6. Then wrote a userlevel program to call function hypercall_test and invoke my hypercall. 
+
+#include <xenctrl.h> 
+#include <stdio.h> 
+
+
+
+int main(){ 
+
+printf("Attempt to invoke the hypercall: __HYPERVISOR_jeet1\n"); 
+int handle, rc; 
+
+/* Acquire Hypervisor Interface Handle. 
+This handle goes as the first argument for the function do_xen_hypercall() 
+*/ 
+
+handle = xc_interface_open(); 
+printf ("Acquired handle to Xen Hypervisor:%d\n",handle); 
+
+
+rc = hypercall_test(handle); 
+printf ("Hypercall Details: %d\n", rc); 
+
+xc_interface_close(handle); 
+printf ("Hypervisor handle closed\n"); 
+
+return 0; 
+
+} 
