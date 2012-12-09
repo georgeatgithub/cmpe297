@@ -1,0 +1,145 @@
+Part 1 ---- Hello World ---  
+george297-helloworld.cloudfoundry.com
+
+Name> Hello
+
+Instances> 2
+
+1: sinatra
+2: other
+Framework> 1      
+
+1: ruby18
+2: ruby19
+3: other
+Runtime> 2
+
+1: 64M
+2: 128M
+3: 256M
+4: 512M
+5: 1G
+6: 2G
+Memory Limit> 1   
+
+Creating Hello... OK
+
+1: Hello.cloudfoundry.com
+2: none
+URL> george297-helloworld.cloudfoundry.com
+
+Updating Hello... OK
+
+Create services for application?> n
+
+Save configuration?> n
+
+Uploading Hello... OK
+Starting Hello... OK
+Checking Hello... OK
+
+
+gdw@ubuntu:/usr/sample-apps/hello$ vmc apps
+Getting applications... OK
+
+name         status    usage      runtime   url                                  
+Hello        n/a       2 x 64M    ruby19    george297-helloworld.cloudfoundry.com
+
+
+To scale the application instances up or down, command is: vmc push appName --instances --memory
+e.g.
+vmc stats Hello
+Getting stats for Hello... OK
+
+instance   cpu               memory         disk       
+#0         0.2% of 4 cores   20.0M of 64M   48.0K of 2G
+#1         0.2% of 4 cores   20.2M of 64M   52.0K of 2G
+
+
+vmc push Hello --instances 1 --memory 64
+Uploading Hello... OK
+Changes:
+instances: 2 -> 1
+Updating Hello... OK
+Stopping Hello... OK
+
+Starting Hello... OK
+Checking Hello... OK
+
+vmc stats Hello
+Getting stats for Hello... OK
+
+instance   cpu               memory         disk       
+#0         4.2% of 4 cores   20.0M of 64M   48.0K of 2G
+
+vmc push Hello --instances 4 --memory 64
+Uploading Hello... OK
+Changes:
+instances: 1 -> 4
+Updating Hello... OK
+Stopping Hello... OK
+
+Starting Hello... OK
+Checking Hello... OK
+
+vmc stats Hello
+Getting stats for Hello... OK
+
+instance   cpu               memory         disk       
+#0         4.0% of 4 cores   20.0M of 64M   48.0K of 2G
+#1         4.5% of 4 cores   20.0M of 64M   48.0K of 2G
+#2         3.7% of 4 cores   20.0M of 64M   48.0K of 2G
+#3         4.6% of 4 cores   20.0M of 64M   48.0K of 2G
+
+
+Part 2 -- MongoDB query
+
+
+gdw@ubuntu:/usr/sample-apps/mongocount$ vmc push mongocount --runtime ruby19
+Instances> 5
+
+1: sinatra
+2: other
+Framework> 1      
+
+1: 64M
+2: 128M
+3: 256M
+4: 512M
+5: 1G
+Memory Limit> 128M
+
+Creating mongocount... OK
+
+1: mongocount.cloudfoundry.com
+2: none
+URL> george297-mongocount.cloudfoundry.com
+
+Updating mongocount... OK
+
+Create services for application?> y
+
+1: mongodb 2.0
+2: mysql 5.1
+3: postgresql 9.0
+4: rabbitmq 2.4
+5: redis 2.4
+6: redis 2.2
+7: redis 2.6
+What kind?> 1
+
+Name?> mongodb-d158a
+
+Creating service mongodb-d158a... OK
+Binding mongodb-d158a to mongocount... OK
+Create another service?> n
+
+Bind other services to application?> n
+
+Save configuration?> n
+
+Uploading mongocount... OK
+Starting mongocount... OK
+Checking mongocount... OK
+
+

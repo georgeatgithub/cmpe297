@@ -1,0 +1,10 @@
+!!!
+%html
+  %body
+    %p Hello World
+    %table
+      - @dates.each do |object|
+        %tr 
+          %td= object.date
+          %td= " = "
+          %td= object.count
