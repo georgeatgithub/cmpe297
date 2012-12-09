@@ -1,0 +1,82 @@
+ let the new system call¡¯s name be ¡°add2¡å.
+
+1. Find a ¡°arch¡± folder in the source code folder. Open the file arch/x86/kernel/syscall_table_32.S in a text editor. Go to the end of the document and add this line -
+
+	.long sys_add2		/* my code */
+
+2. Now open arch/x86/include/asm/unistd_32.h and find out
+	#define __NR_prlimit64 340
+
+3. Add a new line after this:
+
+	#define __NR_add2		341
+
+   After 3-4 lines, find a line like
+
+	#define NR_syscalls 341
+
+   Change it to
+
+	#define NR_syscalls		342
+
+4. Now edit arch/x86/include/asm/unistd_64.h
+   Find out:
+
+	#define __NR_prlimit64 302
+	__SYSCALL(__NR_prlimit64, sys_prlimit64)
+
+   Now after these two lines, add these two lines
+
+   #define __NR_add2				303
+   __SYSCALL(__NR_add2, sys_add2)
+
+5. Now again in the source folder, find a folder named include. Open the file include/linux/syscalls.h and go to the end of the file. Before the line
+
+	#endif
+
+   write this prototype definition line:
+
+	asmlinkage long sys_add2(int i,int j);
+
+6. Now find out the kernel folder in the source directory. Create a new empty file in the kernel folder with the name ¡°mysysteamcalls.c¡± . Add the following codes in the file:
+
+	#include<linux/linkage.h>
+	asmlinkage long sys_add2(int i,int j)
+	{
+    		return i+j;
+	}
+
+7. Now open the Makefile in this folder(/kernel/Makefile) and find out
+	
+	obj-y += groups.o
+	
+   Add a new line before this line :
+
+	obj-y += mysysteamcalls.o
+
+Now compile or recompile the source code and enjoy the new system call.
+
+Here is a sample code to call the system call :
+
+#include <stdio.h>
+#include <linux/unistd.h>
+#include <sys/syscall.h>
+
+//comment the following line if you are using 64 bit, this number is the same used previously
+#define sys_add2 341
+
+//comment the following line if you are using 32 bit, this number is the same used previously
+#define sys_add2 303
+
+int main(void)
+{
+    int a,b,c;
+    printf("Adding Two Numbers in Kernel Space\n");
+    printf("Input a: ");
+    scanf("%d",&a);
+    printf("Input b: ");
+    scanf("%d", &b);
+    c = syscall(sys_add2, a, b);
+    printf("System call returned %d\n", c);
+    return 0;
+}
